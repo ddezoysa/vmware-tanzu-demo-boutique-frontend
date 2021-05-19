@@ -1,4 +1,6 @@
 pipeline {
+    def appNameVar
+    def appVerVar
     agent any
 
     stages {
@@ -17,11 +19,12 @@ pipeline {
         }
         stage('Build & Package') {
             steps {
-                docker.build("${env.APP_NAME}:${env.APP_VERSION}",".")
-                docker.withRegistry('https://368696334230.dkr.ecr.ap-south-1.amazonaws.com','ecr:ap-south-1:awsECRDev')
-                {
-                    docker.image("${appNameVar}:${appVerVar}").push("${appVerVar}")
-                }
+                echo "Build & Package"
+                // docker.build("${env.APP_NAME}:${env.APP_VERSION}",".")
+                // docker.withRegistry('https://368696334230.dkr.ecr.ap-south-1.amazonaws.com','ecr:ap-south-1:awsECRDev')
+                // {
+                //     docker.image("${appNameVar}:${appVerVar}").push("${appVerVar}")
+                // }
             }
         }
         stage('Test') {
