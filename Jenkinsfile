@@ -12,7 +12,8 @@ pipeline {
                 checkout scm
                 sh ''' echo "Running the build."
                 export APP_NAME=${JOB_NAME%/*}
-                export APP_VERSION=$(grep version frontend//Chart.yaml | awk \'{print $2}\' | sed \'s/\\"//g\')
+                # export APP_VERSION=$(grep version frontend//Chart.yaml | awk \'{print $2}\' | sed \'s/\\"//g\')
+                export APP_VERSION=2.2
                 echo ${APP_NAME} > appNameVar
                 echo ${APP_VERSION} > appVerVar
                 '''
