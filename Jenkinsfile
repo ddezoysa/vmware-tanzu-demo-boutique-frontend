@@ -11,18 +11,13 @@ pipeline {
                 echo ${APP_NAME} > appNameVar
                 echo ${APP_VERSION} > appVerVar
                 '''
-                appNameVar = readFile('appNameVar').trim()
-                appVerVar = readFile('appVerVar').trim()
-
-                echo "${appNameVar}"
-                echo "${appVerVar}"
+                echo "${env.APP_NAME}"
+                echo "${env.APP_VERSION}"
             }
         }
         stage('Build & Package') {
             steps {
-                echo "${appNameVar}"
-                echo "${appVerVar}"
-                docker.build("${appNameVar}:${appVerVar}",".")
+                docker.build("${env.APP_NAME}:${env.APP_VERSION}",".")
                 docker.withRegistry('https://368696334230.dkr.ecr.ap-south-1.amazonaws.com','ecr:ap-south-1:awsECRDev')
                 {
                     docker.image("${appNameVar}:${appVerVar}").push("${appVerVar}")
