@@ -12,7 +12,7 @@ pipeline {
                 checkout scm
                 sh ''' echo "Running the build."
                 export APP_NAME=${JOB_NAME%/*}
-                export APP_VERSION=$(grep version frontend/Chart.yaml | awk \'{print $2}\' | sed \'s/\\"//g\')
+                export APP_VERSION=$(grep version frontend//Chart.yaml | awk \'{print $2}\' | sed \'s/\\"//g\')
                 echo ${APP_NAME} > appNameVar
                 echo ${APP_VERSION} > appVerVar
                 '''
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 sh '''
                 export APP_NAME=${JOB_NAME%/*}
-                export APP_VERSION=$(grep version frontend/Chart.yaml | awk \'{print $2}\' | sed \'s/\\"//g\')
+                export APP_VERSION=$(grep version frontend//Chart.yaml | awk \'{print $2}\' | sed \'s/\\"//g\')
                 export NAMESPACE=dev
                 export ENVIRONMENT=dev
                 if helm ls --namespace ${NAMESPACE} |grep ${APP_NAME}; then
