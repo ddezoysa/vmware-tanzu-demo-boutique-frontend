@@ -1,6 +1,9 @@
+#!groovy
+
+def appNameVar
+def appVerVar
+
 pipeline {
-    def appNameVar
-    def appVerVar
     agent any
 
     stages {
