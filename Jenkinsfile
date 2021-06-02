@@ -1,33 +1,36 @@
 #!groovy
 
-def appNameVar
-def appVerVar
+// def appNameVar
+// def appVerVar
 
 pipeline {
+    environment { 
+        registry = "santhoshv/boutique-frontend" 
+        registryCredential = 'dockerhub_id' 
+        dockerImage = '' 
+        dockerVersion = ":$BUILD_NUMBER"+".1.0"
+    }
     agent any
-
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-                sh ''' echo "Running the build."
-                export APP_NAME=${JOB_NAME%/*}
-                export APP_VERSION=2.2
-                // echo ${APP_NAME} > appNameVar
-                // echo ${APP_VERSION} > appVerVar
-                '''
-                // echo "${env.APP_NAME}"
-                // echo "${env.APP_VERSION}"
-            }
+        // stage('Cloning our Git') { 
+        //     steps { 
+        //         git 'https://github.com/SanthoshVajinepalli/frontend-demo.git' 
+        //     }
+        // } 
+        stage('Building image') { 
+            steps { 
+                script { 
+                    dockerImage = docker.build(registry + dockerVersion) 
+                }
+            } 
         }
-        stage('Build & Package') {
-            steps {
-                echo "Build & Package"
-                // docker.build("${env.APP_NAME}:${env.APP_VERSION}",".")
-                // docker.withRegistry('https://368696334230.dkr.ecr.ap-south-1.amazonaws.com','ecr:ap-south-1:awsECRDev')
-                // {
-                //     docker.image("${appNameVar}:${appVerVar}").push("${appVerVar}")
-                // }
+        stage('Push image') { 
+            steps { 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                } 
             }
         }
         stage('Test') {
@@ -37,20 +40,14 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh '''
-                export APP_NAME=${JOB_NAME%/*}
-                export APP_VERSION=$(grep version frontend//Chart.yaml | awk \'{print $2}\' | sed \'s/\\"//g\')
-                export NAMESPACE=dev
-                export ENVIRONMENT=dev
-                if helm ls --namespace ${NAMESPACE} |grep ${APP_NAME}; then
-                  echo "Release ${APP_NAME} exists, Upgrading !! "
-                  helm del --purge $APP_NAME
-                  helm install -n ${APP_NAME} --namespace ${NAMESPACE} -f ${APP_NAME}/env/${ENVIRONMENT}-values.yaml --version ${APP_VERSION} ${APP_NAME}/
-                  # helm upgrade --namespace ${NAMESPACE} -f ${APP_NAME}/env/${ENVIRONMENT}-values.yaml ${APP_NAME} ${APP_NAME}/
-                else
-                  echo "Release ${APP_NAME} not found, Installing!!"
-                  helm install -n ${APP_NAME} --namespace ${NAMESPACE} -f ${APP_NAME}/env/${ENVIRONMENT}-values.yaml ${APP_NAME}/
-                fi
+                bat '''
+                set KUBECONFIG=demo.kubeconfig.yaml
+                set KUBECTL_VSPHERE_PASSWORD=1234Qwer$
+                kubectl vsphere login --server=https://192.168.0.72 --vsphere-username=demo@vsphere.local --tanzu-kubernetes-cluster-namespace=demo --tanzu-kubernetes-cluster-name=demo-cluster --insecure-skip-tls-verify
+                kubectl config use-context demo-cluster
+                
+                helm uninstall frontend
+                helm install  frontend -f frontend/env/dev-values.yaml --version 12.1.0 frontend/
                 '''
             }
         }

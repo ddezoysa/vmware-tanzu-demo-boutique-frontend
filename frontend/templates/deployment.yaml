@@ -4,6 +4,10 @@ metadata:
   name: {{ include "frontend.fullname" . }}
   labels:
     {{- include "frontend.labels" . | nindent 4 }}
+    app: {{ template "frontend.name" . }}
+    chart: {{ template "frontend.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -19,6 +23,10 @@ spec:
       {{- end }}
       labels:
         {{- include "frontend.selectorLabels" . | nindent 8 }}
+        app: {{ template "frontend.name" . }}
+        chart: {{ template "frontend.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
