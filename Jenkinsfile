@@ -5,8 +5,8 @@
 
 pipeline {
     environment { 
-        registry = "santhoshv/boutique-frontend" 
-        registryCredential = 'dockerhub_id' 
+        registry = "mdinuth/boutique-frontend" 
+        registryCredential = 'docker-mdinuth' 
         dockerImage = '' 
         dockerVersion = ":$BUILD_NUMBER"+".1.0"
     }
@@ -43,11 +43,11 @@ pipeline {
                 bat '''
                 set KUBECONFIG=demo.kubeconfig.yaml
                 set KUBECTL_VSPHERE_PASSWORD=1234Qwer$
-                kubectl vsphere login --server=https://192.168.0.72 --vsphere-username=demo@vsphere.local --tanzu-kubernetes-cluster-namespace=demo --tanzu-kubernetes-cluster-name=demo-cluster --insecure-skip-tls-verify
+                kubectl vsphere login --server=https://10.0.10.30 --vsphere-username=demo@vsphere.local --tanzu-kubernetes-cluster-namespace=demo --tanzu-kubernetes-cluster-name=demo-cluster --insecure-skip-tls-verify
                 kubectl config use-context demo-cluster
                 
                 helm uninstall frontend
-                helm install  frontend -f frontend/env/dev-values.yaml --version 12.1.0 frontend/
+                helm install  frontend -f frontend/env/dev-values.yaml --version 0.2.3 frontend/
                 '''
             }
         }
