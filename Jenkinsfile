@@ -8,7 +8,7 @@ pipeline {
         registry = "mdinuth/boutique-frontend" 
         registryCredential = 'docker-mdinuth' 
         dockerImage = '' 
-        dockerVersion = ":$BUILD_NUMBER"+".1.0"
+        dockerVersion = "0.2.3."+":$BUILD_NUMBER"
     }
     agent any
     stages {
