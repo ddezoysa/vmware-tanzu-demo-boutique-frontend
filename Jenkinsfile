@@ -47,7 +47,7 @@ pipeline {
                 kubectl config use-context demo-cluster
                 
                 helm uninstall frontend
-                helm install  frontend -f frontend/env/dev-values.yaml --set image.tag=$dockerVersion --version 0.2.3 frontend/
+                helm install  frontend -f frontend/env/dev-values.yaml --set image.tag=%dockerVersion% --version 0.2.3 frontend/
                 '''
             }
         }
