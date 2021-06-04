@@ -8,7 +8,7 @@ pipeline {
         registry = "mdinuth/boutique-frontend" 
         registryCredential = 'docker-mdinuth' 
         dockerImage = '' 
-        dockerVersion = "0.2.3."+"$BUILD_NUMBER"
+        appVersion = "0.2.3."+"$BUILD_NUMBER"
     }
     agent any
     stages {
@@ -20,7 +20,7 @@ pipeline {
         stage('Building image') { 
             steps { 
                 script { 
-                    dockerImage = docker.build(registry + ":" + dockerVersion) 
+                    dockerImage = docker.build(registry + ":" + appVersion) 
                 }
             } 
         }
@@ -47,7 +47,7 @@ pipeline {
                 kubectl config use-context demo-cluster
                 
                 helm uninstall frontend
-                helm install  frontend -f frontend/env/dev-values.yaml --set image.tag=%dockerVersion% --version 0.2.3 frontend/
+                helm install  frontend -f frontend/env/dev-values.yaml --set image.tag=%appVersion% --version 0.2.3 frontend/
                 '''
             }
         }
