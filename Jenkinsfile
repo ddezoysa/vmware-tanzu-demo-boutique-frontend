@@ -5,8 +5,8 @@
 
 pipeline {
     environment { 
-        registry = "mdinuth/boutique-frontend" 
-        registryCredential = 'docker-mdinuth' 
+        registry = "172.17.0.4/demo/boutique-frontend" 
+        registryCredential = 'harbor-demo' 
         dockerImage = '' 
         appVersion = "0.2.3."+"$BUILD_NUMBER"
     }
